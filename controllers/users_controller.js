@@ -32,7 +32,6 @@ module.exports.createUser = async function(req, res){
 
 module.exports.userDetails = async function(req, res){
     const input = req.body;
-    let encryptPassword = await bcrypt.hash(input.password, 10);
 
     const newUserId = await user_credentials.findOne({
         $or: [
@@ -40,6 +39,13 @@ module.exports.userDetails = async function(req, res){
           { email: input.email }
         ]
     }, { userId: 1 });
+
+    await user_credentials.updateOne({
+      $or: [
+        { phone: input.phone },
+        { email: input.email }
+      ]
+    }, { $set: { avatar: input.avatar}})
     try {
         await user_details.create({
           userId: newUserId.userId,
