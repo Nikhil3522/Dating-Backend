@@ -15,6 +15,6 @@ router.post('/login', passport.authenticate(
 router.post('/signup', userController.createUser);
 router.post('/signup2', userController.userDetails);
 router.get('/wrongCredential', userController.wrongCredential);
-
+router.get('/home', passport.checkAuthentication , userController.home);
 
 module.exports = router ;

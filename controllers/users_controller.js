@@ -116,7 +116,6 @@ module.exports.userDetails = async function(req, res){
 }
 
 module.exports.loginUser = async function(req, res){
-  console.log("user login", req);
   return res.json({
     message: "User LoggedIN!"
   })
@@ -125,5 +124,27 @@ module.exports.loginUser = async function(req, res){
 module.exports.wrongCredential = async function(req, res){
   return res.json({
     message: "Wrong Email or Passwod!"
+  })
+}
+
+module.exports.home = async function(req, res){
+  const userId = req.user.userId;
+
+  const userGender = await user_details.findOne({userId: userId}, { gender: 1 });
+
+  var userProfileId;
+
+  if(userGender.gender === 'M'){
+    userProfileId = await femaleList.findOne();
+    userProfileId = userProfileId.femaleList;
+  }else{
+    userProfileId = await maleList.findOne();
+    userProfileId = userProfileId.maleList;
+  }
+
+  const users = await user_details.find({ userId : { $in: userProfileId}});
+
+  return res.json({
+    message: users
   })
 }

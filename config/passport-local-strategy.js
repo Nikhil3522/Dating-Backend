@@ -56,7 +56,10 @@ passport.checkAuthentication = function(req, res, next){
     }
 
     // if the user is not signed in
-    return res.redirect('/');
+    // return res.redirect('/login');
+    return res.status(401).json({
+        ErrorMessage: "Authentication required to get response!"
+    })
 }
 
 passport.setAuthenticatedUser = function(req, res, next){
