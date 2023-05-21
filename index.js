@@ -6,8 +6,25 @@ const app = express();
 app.use(express.urlencoded());
 app.use(express.static('assets'));
 const db = require('./config/mongoose');
+const session = require('express-session');
+const passport = require('passport');
+const passportLocal = require('./config/passport-local-strategy');
+require('dotenv').config();
 
 app.use(express.urlencoded());
+
+app.use(session({
+    name: 'codeial',
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+        maxAge: (1000 * 60 * 100)
+    }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', require('./routes'));
 

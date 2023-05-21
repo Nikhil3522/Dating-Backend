@@ -114,3 +114,16 @@ module.exports.userDetails = async function(req, res){
         });
       }
 }
+
+module.exports.loginUser = async function(req, res){
+  console.log("user login", req);
+  return res.json({
+    message: "User LoggedIN!"
+  })
+}
+
+module.exports.wrongCredential = async function(req, res){
+  return res.json({
+    message: "Wrong Email or Passwod!"
+  })
+}
