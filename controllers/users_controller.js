@@ -61,7 +61,9 @@ module.exports.userDetails = async function(req, res){
           languages: input.languages,
           gender: input.gender,
           interest: input.interest,
+          recommendationPreferences: input.recommendationPreferences,
           city: input.city,
+          verified: input.verified,
           location :{
               long: input.location.long,
               lat: input.location.lat
@@ -132,6 +134,8 @@ module.exports.home = async function(req, res){
 
   const userGender = await user_details.findOne({userId: userId}, { gender: 1 });
 
+  const filterArray = await user_details.findOne({userId: userId});
+
   var userProfileId;
 
   if(userGender.gender === 'M'){
@@ -144,7 +148,18 @@ module.exports.home = async function(req, res){
 
   const users = await user_details.find({ userId : { $in: userProfileId}});
 
+  var finalUsers = await users.filter((item) => {
+    if(item.age < filterArray.recommendationPreferences.ageRange.max && item.age > filterArray.recommendationPreferences.ageRange.min){
+      return item;
+    }
+  });
+
   return res.json({
-    message: users
+    message: finalUsers
   })
+}
+
+module.exports.like = async function(req, res){
+  const userId = req.params.userId;
+
 }
