@@ -266,3 +266,31 @@ module.exports.nope = async function(req, res){
 
 
 }
+
+module.exports.superLike = async function(req, res){
+  // userId have the id of user who give the like
+  const userId = req.user.userId;
+
+  // profileId have the id of the user who get the like
+  var profileId = req.params.profileId;
+  profileId = parseInt(profileId);
+
+  try{
+    await user_details.updateOne({userId: profileId}, {
+      $addToSet: {superLike: userId }
+    });
+
+    await user_details.updateOne({userId: userId}, {
+      $addToSet: {showProfile: profileId }
+    });
+
+    return res.status(200).json({
+      message: "super Liked Done!"
+    })
+  }catch (error) {
+    return res.status(401).json({
+      message: `Failed in super like the profile -> ${error}`
+    })
+  }
+
+}

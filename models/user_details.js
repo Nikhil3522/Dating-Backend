@@ -114,6 +114,10 @@ const userDetailsSchema = new mongoose.Schema({
     like: {
         type: Array,
         required: true
+    },
+    superLike: {
+        type: Array,
+        required: true
     }
 }, {
     timestamps: true
