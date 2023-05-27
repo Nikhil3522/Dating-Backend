@@ -322,3 +322,20 @@ module.exports.superLike = async function(req, res){
   }
 
 }
+
+module.exports.editProfile = async function(req, res){
+  // userId have the id of user who give the like
+  const userId = req.user.userId;
+
+  try{
+    await user_details.updateOne({userId: userId}, req.body);
+
+    return res.json({
+      message: "Profile Updated"
+    })
+  }catch(error){
+    return res.json({
+      message: `Failed in Updating the profile -> ${error}`
+    })
+  }
+}

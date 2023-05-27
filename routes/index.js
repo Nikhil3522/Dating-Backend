@@ -19,5 +19,6 @@ router.get('/home', passport.checkAuthentication , userController.home);
 router.post('/like/:profileId', passport.checkAuthentication , userController.like);
 router.post('/superLike/:profileId', passport.checkAuthentication, userController.superLike);
 router.post('/nope/:profileId', passport.checkAuthentication, userController.nope);
+router.post('/editProfile', passport.checkAuthentication, userController.editProfile);
 
 module.exports = router ;
