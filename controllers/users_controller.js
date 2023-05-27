@@ -129,6 +129,23 @@ module.exports.wrongCredential = async function(req, res){
   })
 }
 
+const calcDistance = async (startCoords, destCoords) =>{
+  let startingLat = (startCoords.lat* Math.PI)/180;
+  let startingLong = (startCoords.long* Math.PI)/180;
+  let destinationLat = (destCoords.lat* Math.PI)/180;
+  let destinationLong = (destCoords.long* Math.PI)/180;
+
+  // Radius of the Earth in kilometers
+  let radius = 6571;
+
+  // Haversine equation
+  let distanceInKilometers = Math.acos(Math.sin(startingLat) * Math.sin(destinationLat) +
+  Math.cos(startingLat) * Math.cos(destinationLat) *
+  Math.cos(startingLong - destinationLong)) * radius;
+
+  return distanceInKilometers;
+}
+
 const potentialProfileAlgorith = async (req, res) => {
   const userId = req.user.userId;
 
@@ -184,9 +201,20 @@ const potentialProfileAlgorith = async (req, res) => {
     }
   }
 
-  const objectLength = Object.keys(users).length
+  const modifiedArray = await Promise.all(users.map(async ({ 
+    userId, name, age, my_basic, image, college, relationship_goals, languages, gender, interest, city, verified, location
+  }) => {
+    const radiusPromise = calcDistance(location, userDetails.location);
+    const radius = await radiusPromise;
+    const numericRadius = Number(radius.toFixed(0));
 
-  return users;
+    return {
+      userId, name, age, my_basic, image, college, relationship_goals, languages, gender, interest, city, verified, radius: numericRadius
+    };
+  }));
+  
+
+  return modifiedArray;
 }
 
 module.exports.home = async function(req, res){
