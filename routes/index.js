@@ -16,5 +16,8 @@ router.post('/signup', userController.createUser);
 router.post('/signup2', userController.userDetails);
 router.get('/wrongCredential', userController.wrongCredential);
 router.get('/home', passport.checkAuthentication , userController.home);
+router.post('/like/:profileId', passport.checkAuthentication , userController.like);
+// router.post('/:userid/superLike', passport.checkAuthentication , );
+// router.post('/:userid/nope', passport.checkAuthentication , );
 
 module.exports = router ;

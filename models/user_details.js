@@ -110,6 +110,10 @@ const userDetailsSchema = new mongoose.Schema({
     permission: {
         type: Number,
         require: true,
+    },
+    like: {
+        type: Array,
+        required: true
     }
 }, {
     timestamps: true

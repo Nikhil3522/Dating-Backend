@@ -215,6 +215,29 @@ module.exports.home = async function(req, res){
 }
 
 module.exports.like = async function(req, res){
-  const userId = req.params.userId;
+  // userId have the id of user who give the like
+  const userId = req.user.userId;
+
+  // profileId have the id of the user who get the like
+  var profileId = req.params.profileId;
+  profileId = parseInt(profileId);
+
+  try{
+    await user_details.updateOne({userId: profileId}, {
+      $addToSet: {like: userId }
+    });
+
+    await user_details.updateOne({userId: userId}, {
+      $addToSet: {showProfile: profileId }
+    });
+
+    return res.status(200).json({
+      message: "Liked Done!"
+    })
+  }catch (error) {
+    return res.status(401).json({
+      message: `Failed in like the profile -> ${error}`
+    })
+  }
 
 }
