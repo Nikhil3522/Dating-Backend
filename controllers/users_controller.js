@@ -129,33 +129,88 @@ module.exports.wrongCredential = async function(req, res){
   })
 }
 
-module.exports.home = async function(req, res){
+const potentialProfileAlgorith = async (req, res) => {
   const userId = req.user.userId;
 
-  const userGender = await user_details.findOne({userId: userId}, { gender: 1 });
-
-  const filterArray = await user_details.findOne({userId: userId});
+  const userDetails = await user_details.findOne({userId: userId});
 
   var userProfileId;
 
-  if(userGender.gender === 'M'){
+  if(userDetails.gender === 'M'){
     userProfileId = await femaleList.findOne();
-    userProfileId = userProfileId.femaleList;
+    const shuffledArray = userProfileId.femaleList.sort(() => 0.5 - Math.random());
+    userProfileId = shuffledArray.slice(0, 20);
   }else{
     userProfileId = await maleList.findOne();
-    userProfileId = userProfileId.maleList;
+    const shuffledArray = userProfileId.maleList.sort(() => 0.5 - Math.random());
+    userProfileId = shuffledArray.slice(0, 20);
   }
 
-  const users = await user_details.find({ userId : { $in: userProfileId}});
+  var users = await user_details.find({ userId : { $in: userProfileId}});
 
-  var finalUsers = await users.filter((item) => {
-    if(item.age < filterArray.recommendationPreferences.ageRange.max && item.age > filterArray.recommendationPreferences.ageRange.min){
-      return item;
+  const ageRange = userDetails.recommendationPreferences.ageRange;
+
+  if(userDetails.permission != 1){
+
+
+    if(userDetails.recommendationPreferences.college != null && ageRange.min != null && ageRange.max != null){
+      users = users.filter((item) => {
+        if(item.age < ageRange.max && item.age > ageRange.min && userDetails.recommendationPreferences.college == item.college){
+          return item;
+        }
+      });
+    }else if(ageRange.min != null && ageRange.max != null){
+      users = users.filter((item) => {
+        if(item.age < ageRange.max && item.age > ageRange.min){
+          return item;
+        }
+      });
+    }else if(userDetails.recommendationPreferences.college != null){
+      users = users.filter((item) => {
+        if(userDetails.recommendationPreferences.college == item.college){
+          return item;
+        }
+      });
     }
-  });
+
+
+  }else{
+    if(ageRange.min != null && ageRange.max != null){
+      users = users.filter((item) => {
+        if(item.age < ageRange.max && item.age > ageRange.min){
+          return item;
+        }
+      });
+    }
+  }
+
+  const objectLength = Object.keys(users).length
+
+  return users;
+}
+
+module.exports.home = async function(req, res){
+  // This function show opposite gender profile to the loggedIN profile on the basis of loggedin user's preferences.
+
+  var loopCount = 3;
+  var users = null;
+
+  while(loopCount > 0){
+    const temp = await potentialProfileAlgorith(req, res);
+
+    if(users == null){
+      users = temp;
+    }else if(temp.length > users.length){
+      users = temp;
+    }
+
+    if(users.length >= 10) break;
+
+    loopCount--;
+  }
 
   return res.json({
-    message: finalUsers
+    userList: users
   })
 }
 
