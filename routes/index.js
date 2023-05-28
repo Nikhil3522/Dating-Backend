@@ -22,5 +22,6 @@ router.post('/nope/:profileId', passport.checkAuthentication, userController.nop
 router.post('/editProfile', passport.checkAuthentication, userController.editProfile);
 router.post('/matchProfile/:profileId', passport.checkAuthentication, userController.matchProfile);
 router.post('/notmatchProfile/:profileId', passport.checkAuthentication, userController.notmatchProfile);
+router.post('/undomatchProfile/:profileId', passport.checkAuthentication, userController.undomatchProfile);
 
 module.exports = router ;

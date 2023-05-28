@@ -404,3 +404,31 @@ module.exports.notmatchProfile = async function(req, res){
     })
   }
 }
+
+module.exports.undomatchProfile = async function(req, res){
+  const userId = req.user.userId;
+
+  var profileId = req.params.profileId;
+  // Converting profileId String to integer
+  profileId = parseInt(profileId);
+  
+  try{
+    await user_details.updateOne({userId: userId}, {
+      $pull: {match: profileId }
+    });    
+  
+    // Insert userId inside match list of profileId
+    await user_details.updateOne({userId: profileId}, {
+      $pull: {match: userId }
+    }); 
+
+    return res.status(200).json({
+      message: "Profile unmatched!"
+    })
+  }catch(error){
+    return res.status(500).json({
+      message: "Something went wrong!"
+    })
+  }
+
+}
