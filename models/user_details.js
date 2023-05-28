@@ -118,6 +118,10 @@ const userDetailsSchema = new mongoose.Schema({
     superLike: {
         type: Array,
         required: true
+    },
+    match:{
+        type: Array,
+        required: true
     }
 }, {
     timestamps: true

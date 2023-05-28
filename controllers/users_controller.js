@@ -324,7 +324,6 @@ module.exports.superLike = async function(req, res){
 }
 
 module.exports.editProfile = async function(req, res){
-  // userId have the id of user who give the like
   const userId = req.user.userId;
 
   try{
@@ -336,6 +335,44 @@ module.exports.editProfile = async function(req, res){
   }catch(error){
     return res.json({
       message: `Failed in Updating the profile -> ${error}`
+    })
+  }
+}
+
+module.exports.matchProfile = async function(req, res){
+  const userId = req.user.userId;
+
+  var profileId = req.params.profileId;
+  // Converting profileId String to integer
+  profileId = parseInt(profileId);
+
+  var likeArr = await user_details.findOne({userId: userId}, {like: 1 });
+  likeArr = likeArr.like;
+
+  const likeExist = likeArr.includes(profileId);
+
+  if(likeExist){
+    // Insert profile id inside match list of userId
+    await user_details.updateOne({userId: userId}, {
+      $addToSet: {match: profileId }
+    });    
+
+    // Insert userId inside match list of profileId
+    await user_details.updateOne({userId: profileId}, {
+      $addToSet: {match: userId }
+    }); 
+
+    // Remove prodile id from like list
+    await user_details.updateOne({userId: userId}, {
+      $pull: {like: profileId }
+    });  
+    
+    return res.status(200).json({
+      message: "Profile matched!"
+    })
+  }else{
+    return res.status(500).json({
+      message: "Something went wrong!  You try to match profile that not exist in your like list."
     })
   }
 }
