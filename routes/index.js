@@ -21,5 +21,6 @@ router.post('/superLike/:profileId', passport.checkAuthentication, userControlle
 router.post('/nope/:profileId', passport.checkAuthentication, userController.nope);
 router.post('/editProfile', passport.checkAuthentication, userController.editProfile);
 router.post('/matchProfile/:profileId', passport.checkAuthentication, userController.matchProfile);
+router.post('/notmatchProfile/:profileId', passport.checkAuthentication, userController.notmatchProfile);
 
 module.exports = router ;
