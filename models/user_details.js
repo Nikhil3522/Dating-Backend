@@ -122,6 +122,10 @@ const userDetailsSchema = new mongoose.Schema({
     match:{
         type: Array,
         required: true
+    },
+    block:{
+        type: Array,
+        required: true
     }
 }, {
     timestamps: true

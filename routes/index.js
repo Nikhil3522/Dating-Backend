@@ -23,5 +23,6 @@ router.post('/editProfile', passport.checkAuthentication, userController.editPro
 router.post('/matchProfile/:profileId', passport.checkAuthentication, userController.matchProfile);
 router.post('/notmatchProfile/:profileId', passport.checkAuthentication, userController.notmatchProfile);
 router.post('/undomatchProfile/:profileId', passport.checkAuthentication, userController.undomatchProfile);
+router.post('/block/:profileId', passport.checkAuthentication, userController.block);
 
 module.exports = router ;

@@ -444,3 +444,25 @@ module.exports.undomatchProfile = async function(req, res){
   }
 
 }
+
+module.exports.block = async function(req, res){
+  const userId = req.user.userId;
+
+  var profileId = req.params.profileId;
+  profileId = parseInt(profileId);
+
+  try{
+    await user_details.updateOne({userId: userId}, {
+      $addToSet: {block: profileId }
+    }); 
+
+    return res.status(200).json({
+      message: "Block profile"
+    })
+  }catch(err){
+    return res.status(500).json({
+      message: "Something went Wrong!"
+    })
+  }
+
+}
