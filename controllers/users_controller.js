@@ -349,6 +349,18 @@ module.exports.matchProfile = async function(req, res){
   var likeArr = await user_details.findOne({userId: userId}, {like: 1 });
   likeArr = likeArr.like;
 
+  var likeArr2 = await user_details.findOne({userId: profileId}, {like: 1 });
+  likeArr2 = likeArr2.like;
+
+  const likeExist2 = likeArr2.includes(userId);
+
+  if(likeExist2){
+    // Remove prodile id from like list
+    await user_details.updateOne({userId: profileId}, {
+      $pull: {like: userId }
+    });  
+  }
+
   const likeExist = likeArr.includes(profileId);
 
   if(likeExist){
