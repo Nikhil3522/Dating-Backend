@@ -1,10 +1,13 @@
 const express = require('express');
+const cors = require('cors');
 const router = express.Router();
 const userController = require('../controllers/users_controller');  
+const paymentController = require('../controllers/payment_controller');
 const passport = require('passport');
 
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
+router.use(cors());
 
 console.log("Hare Krishna")
 
@@ -24,5 +27,7 @@ router.post('/matchProfile/:profileId', passport.checkAuthentication, userContro
 router.post('/notmatchProfile/:profileId', passport.checkAuthentication, userController.notmatchProfile);
 router.post('/undomatchProfile/:profileId', passport.checkAuthentication, userController.undomatchProfile);
 router.post('/block/:profileId', passport.checkAuthentication, userController.block);
+router.get( '/create-order', paymentController.createOrder);
+router.post("/api/payment/verify", paymentController.verifyPayment);
 
 module.exports = router ;
