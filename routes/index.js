@@ -3,6 +3,7 @@ const cors = require('cors');
 const router = express.Router();
 const userController = require('../controllers/users_controller');  
 const paymentController = require('../controllers/payment_controller');
+const chatController = require('../controllers/chat_controller');
 const passport = require('passport');
 
 router.use(express.json());
@@ -29,5 +30,7 @@ router.post('/undomatchProfile/:profileId', passport.checkAuthentication, userCo
 router.post('/block/:profileId', passport.checkAuthentication, userController.block);
 router.get( '/create-order', paymentController.createOrder);
 router.post("/api/payment/verify", paymentController.verifyPayment);
+router.get('/chat/get-messages/:userId', passport.checkAuthentication, chatController.getMessages);
+router.post('/chat/send-message', passport.checkAuthentication, chatController.sendMessage);
 
 module.exports = router ;

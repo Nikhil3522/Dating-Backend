@@ -1,6 +1,8 @@
 // Radhe Shyam 
 // console.log("Radhe Shyam");
 const express = require('express');
+// const http = require('http');
+// const socketIO = require('socket.io');
 const port = 8000;
 const app = express();
 app.use(express.urlencoded());
@@ -10,6 +12,17 @@ const session = require('express-session');
 const passport = require('passport');
 const passportLocal = require('./config/passport-local-strategy');
 require('dotenv').config();
+
+// const server = http.createServer(app);
+// const io = socketIO(server);
+// io.listen(5000);
+// console.log("Socket.io is running on port 5000")
+
+// setup the chat server to be used with socket.io
+// const chatServer = require('http').Server(app);
+// const chatSockets = require('./config/chat_socket').chatSocket(chatServer);
+// chatServer.listen(5000);
+// console.log('chat server is listening on port 5000');
 
 app.use(express.urlencoded());
 
