@@ -21,10 +21,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    phone: {
-        type: Number,
-        required: true
-    },
+    // phone: {
+    //     type: Number,
+    //     required: true
+    // },
     avatar: {
         type: String,
         required: false

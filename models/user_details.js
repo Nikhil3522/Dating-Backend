@@ -16,11 +16,11 @@ const userDetailsSchema = new mongoose.Schema({
         type: Number,
         required: false
     },
-    phone: {
-        type: Number,
-        required: true,
-        unique: true
-    },
+    // phone: {
+    //     type: Number,
+    //     required: true,
+    //     unique: true
+    // },
     verified:{
         type: Boolean,
         require: false
