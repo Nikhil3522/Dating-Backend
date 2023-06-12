@@ -163,15 +163,6 @@ const potentialProfileAlgorith = async (req, res) => {
     userProfileId = shuffledArray.slice(0, 20);
   }
 
-  // Removed the userId who already present in any one of these list.
-  const showProfile = userDetails.showProfile;
-  const like = userDetails.like;
-  const superLike = userDetails.superLike;
-  const match = userDetails.showProfile;
-  // const block = userDetails.block;
-
-  userProfileId = userProfileId.filter((element) => !showProfile.includes(element) && !like.includes(element) && !superLike.includes(element) && !match.includes(element));
-
   var users = await user_details.find({ userId : { $in: userProfileId}});
 
   const ageRange = userDetails.recommendationPreferences.ageRange;
