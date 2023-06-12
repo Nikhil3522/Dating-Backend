@@ -1,0 +1,29 @@
+<html>
+    <header>
+
+    </header>
+    <body>
+        <button id="btn">Click</button>
+        <!-- <script src="localhost:8000/socket.io/socket.io.js"></script> -->
+        <script src="http://127.0.0.1:7000/socket.io/socket.io.js"></script>
+        <script>
+            var BTN = document.getElementById('btn');
+            BTN.addEventListener("click", sendMessage);
+            const socket = io();
+
+            // Send a message
+            function sendMessage() {
+                console.log("start");
+            const recipientId = '123'; // Example recipient ID
+            const message = 'Hello, recipient!'; // Example message
+            socket.emit('message', { recipientId, message });
+            }
+
+            // Receive a message
+            socket.on('message', (data) => {
+            console.log('Received message:', data);
+            // Handle the received message
+            });
+        </script>
+    </body>
+</html>
