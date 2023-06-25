@@ -18,6 +18,7 @@ router.post('/login', passport.authenticate(
 ), userController.loginUser);
 router.post('/signup', userController.createUser);
 router.post('/signup2', userController.userDetails);
+router.post('/imageUpload', userController.imageUploader);
 router.get('/wrongCredential', userController.wrongCredential);
 router.get('/home', passport.checkAuthentication , userController.home);
 router.post('/like/:profileId', passport.checkAuthentication , userController.like);

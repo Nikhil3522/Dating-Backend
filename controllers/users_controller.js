@@ -3,6 +3,9 @@ const user_details = require('../models/user_details');
 const maleList = require('../models/male_list');
 const femaleList = require('../models/female_list');
 const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 module.exports.createUser = async function(req, res){
     const input = req.body;
@@ -16,7 +19,7 @@ module.exports.createUser = async function(req, res){
           name: input.name,
           email: input.email,
           password: encryptPassword,
-          phone: input.phone,
+          // phone: input.phone,
           avatar: input.avatar,
         });
       
@@ -30,19 +33,64 @@ module.exports.createUser = async function(req, res){
       }
 }
 
+function countFilesInFolder(folderPath) {
+  return new Promise((resolve, reject) => {
+    fs.readdir(folderPath, (err, files) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(files.length);
+      }
+    });
+  });
+}
+
+// Define the storage configuration for multer
+const storage = multer.diskStorage({
+  destination: 'C:/Users/nikhi/Desktop/react2/Dating/BackEnd/assets/image', // Replace with the actual folder path
+  filename: (req, file, cb) => {
+    // Get the current file count in the folder
+    const folderPath = 'C:/Users/nikhi/Desktop/react2/Dating/BackEnd/assets/image'; // Replace with the actual folder path
+    const fileCount = fs.readdirSync(folderPath).length;
+
+    const filename = `${fileCount + 1}${path.extname(file.originalname)}`;
+    cb(null, filename);
+  },
+});
+
+// Create the multer middleware
+const upload = multer({ storage });
+
+module.exports.imageUploader = function (req, res) {
+  const folderPath = 'C:/Users/nikhi/Desktop/react2/Dating/BackEnd/assets/image'; // Replace with the actual folder path
+
+  upload.single('image')(req, res, function (err){
+
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Failed to upload file' });
+      }
+
+      countFilesInFolder(folderPath)
+      .then(fileCount => {
+        const filename = req.file.originalname;
+        res.json({ image: `${fileCount}${path.extname(filename)}` });
+      })
+    });
+};
+
 module.exports.userDetails = async function(req, res){
     const input = req.body;
 
     const newUserId = await user_credentials.findOne({
         $or: [
-          { phone: input.phone },
+          // { phone: input.phone },
           { email: input.email }
         ]
     }, { userId: 1 });
 
     await user_credentials.updateOne({
       $or: [
-        { phone: input.phone },
         { email: input.email }
       ]
     }, { $set: { avatar: input.avatar}})
@@ -51,7 +99,7 @@ module.exports.userDetails = async function(req, res){
           userId: newUserId.userId,
           name: input.name,
           email: input.email,
-          phone: input.phone,
+          // phone: input.phone,
           avatar: input.avatar,
           age: input.age,
           my_basic: input.my_basic,
