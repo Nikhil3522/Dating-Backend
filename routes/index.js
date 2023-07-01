@@ -8,7 +8,10 @@ const passport = require('passport');
 
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
-router.use(cors());
+router.use(cors({
+    origin: 'http://localhost:3000', // Update with the actual origin of your React.js app
+    credentials: true // Allow credentials (e.g., cookies, authorization headers)
+  }));
 
 console.log("Hare Krishna")
 
@@ -17,6 +20,7 @@ router.post('/login', passport.authenticate(
     {failureRedirect: '/wrongCredential'},
 ), userController.loginUser);
 router.post('/signup', userController.createUser);
+router.post('/mailverify', userController.mailVerify);
 router.post('/signup2', userController.userDetails);
 router.post('/imageUpload', userController.imageUploader);
 router.get('/wrongCredential', userController.wrongCredential);

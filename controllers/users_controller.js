@@ -6,8 +6,49 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const mailer = require('../config/mailer');
+var nodemailer = require('nodemailer');
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+
+var OTP_for_mail_verification = {};
+
+module.exports.mailVerify = function(req, res){
+  const mailId = req.body.mailId;
+
+  const otp = Math.floor(1000 + Math.random() * 9000);
+  OTP_for_mail_verification[mailId] = otp;
+
+  var mailOptions = {
+    from: process.env.MAILER_USER,
+    to: mailId,
+    subject: "OTP for Verification",
+    text: `Your OTP is ${OTP_for_mail_verification[mailId]}`
+  }
+
+  console.log("otp", OTP_for_mail_verification);
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.MAILER_HOST,
+    port: process.env.MAILER_PORT,
+    auth: {
+        user: process.env.MAILER_USER,
+        pass: process.env.MAILER_PASS 
+    }
+  });
+
+  transporter.sendMail(mailOptions, function(err, info){
+    if(err){
+      return res.status(500).json({message: `Something Went wrong for send OTP. ${err}`});
+    } else {
+      return res.status(200).json({message: `Email sent: ${info.response}`});
+    }
+  })
+
+}
 
 module.exports.createUser = async function(req, res){
+  if(req.body.otp == OTP_for_mail_verification[req.body.email]){
     const input = req.body;
     let encryptPassword = await bcrypt.hash(input.password, 10);
     var totalUsers = await user_credentials.find().sort({userId: -1}).limit(1);
@@ -31,6 +72,11 @@ module.exports.createUser = async function(req, res){
           message: `Error in creating a user -> ${error.message}`
         });
       }
+  }else{
+    return res.status(401).json({
+      message: 'Wrong OTP'
+    });
+  }
 }
 
 function countFilesInFolder(folderPath) {
@@ -166,9 +212,23 @@ module.exports.userDetails = async function(req, res){
 }
 
 module.exports.loginUser = async function(req, res){
+  // console.log("req", req);
+  // console.log("res", res);
   return res.json({
     message: "User LoggedIN!"
   })
+
+  // passport.authenticate('local', { session: false }, (err, user, info) => {
+  //   if (err || !user) {
+  //     return res.status(401).json({ message: 'Invalid username or password' });
+  //   }
+
+  //   // If authentication is successful, generate a JWT token
+  //   const token = jwt.sign({ userId: user.id }, 'your_secret_key');
+
+  //   // Return the token as the response
+  //   return res.json({ token });
+  // })(req, res, next);
 }
 
 module.exports.wrongCredential = async function(req, res){
