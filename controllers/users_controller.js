@@ -334,6 +334,22 @@ const potentialProfileAlgorith = async (req, res) => {
   return modifiedArray;
 }
 
+module.exports.myDetail = async function(req, res){
+  const userId = req.user.userId;
+
+  const userDetails = await user_details.findOne({userId: userId});
+  
+  if(userDetails){
+    return res.status(200).json({
+      data: userDetails
+    })
+  }
+
+  return res.status(400).json({
+    message: "Something went wrong to find user detail"
+  })
+}
+
 module.exports.home = async function(req, res){
   // This function show opposite gender profile to the loggedIN profile on the basis of loggedin user's preferences.
 
@@ -356,6 +372,29 @@ module.exports.home = async function(req, res){
 
   return res.json({
     userList: users
+  })
+}
+
+module.exports.getUserDetail = async function(req, res){
+  var profileId = req.params.profileId;
+  profileId = parseInt(profileId);
+
+  const profileDetails = await user_details.findOne({userId: profileId});
+
+  const temp =  {
+    name: profileDetails.name,
+    age: profileDetails.age,
+    avatar: profileDetails.avatar
+  }
+
+  if(profileDetails){
+    return res.status(200).json({
+      data: temp
+    })
+  }
+
+  return res.status(400).json({
+    message: "Something went wrong to find profile detail"
   })
 }
 
