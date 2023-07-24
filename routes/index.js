@@ -5,13 +5,17 @@ const userController = require('../controllers/users_controller');
 const paymentController = require('../controllers/payment_controller');
 const chatController = require('../controllers/chat_controller');
 const passport = require('passport');
+const http = require('http');
+
+
+router.use(cors({
+    origin: 'http://localhost:3000', // Update with the actual origin of your React.js app
+    methods: ['GET', 'POST'],
+    credentials: true // Allow credentials (e.g., cookies, authorization headers)
+  }));
 
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
-router.use(cors({
-    origin: 'http://localhost:3000', // Update with the actual origin of your React.js app
-    credentials: true // Allow credentials (e.g., cookies, authorization headers)
-  }));
 
 console.log("Hare Krishna")
 
@@ -19,6 +23,14 @@ router.post('/login', passport.authenticate(
     'local',
     {failureRedirect: '/wrongCredential'},
 ), userController.loginUser);
+router.get('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ message: "Logout failed" });
+    }
+    return res.status(201).json({ message: "Logout successfully" });
+  });
+});
 router.post('/signup', userController.createUser);
 router.post('/mailverify', userController.mailVerify);
 router.post('/signup2', userController.userDetails);
