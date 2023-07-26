@@ -9,7 +9,10 @@ passport.use(new LocalStrategy({
   },
   async function(email, password, done){
     try {
-      const user = await user_credentials.findOne({ email: email });
+      
+    const lowerCaseEmail = email.toLowerCase();
+
+    const user = await user_credentials.findOne({ email: { $regex: new RegExp('^' + lowerCaseEmail + '$', 'i') } });
 
       if (!user) {
         return done(null, false);
