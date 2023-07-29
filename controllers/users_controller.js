@@ -26,7 +26,7 @@ module.exports.mailVerify = function(req, res){
     text: `Your OTP is ${OTP_for_mail_verification[mailId]}`
   }
 
-  console.log("otp", OTP_for_mail_verification);
+  // console.log("otp", OTP_for_mail_verification);
 
   const transporter = nodemailer.createTransport({
     host: process.env.MAILER_HOST,
@@ -49,11 +49,18 @@ module.exports.mailVerify = function(req, res){
 
 module.exports.createUser = async function(req, res){
   if(req.body.otp == OTP_for_mail_verification[req.body.email]){
+    delete OTP_for_mail_verification[req.body.email];
     const input = req.body;
     let encryptPassword = await bcrypt.hash(input.password, 10);
     var totalUsers = await user_credentials.find().sort({userId: -1}).limit(1);
 
-    const newUserId = totalUsers[0].userId + 1;
+    var newUserId = 0;
+
+    if(totalUsers[0]){
+      newUserId = totalUsers[0].userId + 1;
+    }
+
+    // var newUserId = totalUsers[0].userId + 1;
     try {
         await user_credentials.create({
           userId: newUserId,
@@ -128,6 +135,7 @@ module.exports.imageUploader = function (req, res) {
 module.exports.userDetails = async function(req, res){
     const input = req.body;
 
+    // console.log("edited Detail", input);
     const newUserId = await user_credentials.findOne({
         $or: [
           // { phone: input.phone },
@@ -145,6 +153,7 @@ module.exports.userDetails = async function(req, res){
           userId: newUserId.userId,
           name: input.name,
           email: input.email,
+          bio: input.bio,
           // phone: input.phone,
           avatar: input.avatar,
           age: input.age,
@@ -235,6 +244,76 @@ module.exports.wrongCredential = async function(req, res){
   return res.json({
     message: "Wrong Email or Passwod!"
   })
+}
+
+var OTP_for_forget_password = {};
+
+module.exports.forgetPasswordOTP = async function(req, res){
+  const mailId = req.body.mailId;
+
+  const otp = Math.floor(1000 + Math.random() * 9000);
+  OTP_for_forget_password[mailId] = otp;
+
+  var mailOptions = {
+    from: process.env.MAILER_USER,
+    to: mailId,
+    subject: "OTP for Verification",
+    text: `Your OTP is ${OTP_for_forget_password[mailId]}`
+  }
+
+  console.log("otp", OTP_for_forget_password);
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.MAILER_HOST,
+    port: process.env.MAILER_PORT,
+    auth: {
+        user: process.env.MAILER_USER,
+        pass: process.env.MAILER_PASS 
+    }
+  });
+
+  transporter.sendMail(mailOptions, function(err, info){
+    if(err){
+      return res.status(500).json({message: `Something Went wrong for send OTP. ${err}`});
+    } else {
+      return res.status(200).json({message: `Email sent: ${info.response}`});
+    }
+  })
+}
+
+module.exports.forgetPasswordOTPVerify = async function(req, res){
+  if(req.body.otp == OTP_for_forget_password[req.body.email]){
+    delete OTP_for_forget_password[req.body.email];
+    return res.status(201).json({
+      message: 'OTP Matched'
+    })
+  }else{
+    return res.status(201).json({
+      message: 'Wrong OTP'
+    });
+  }
+}
+
+module.exports.newPassword = async function(req, res){
+  const input = req.body;
+
+  try{
+    let encryptPassword = await bcrypt.hash(input.password, 10);
+
+    await user_credentials.updateOne(
+      {email: input.email},
+      { $set: { password: encryptPassword } }
+    );
+
+    return res.status(201).json({
+      message: "Password Changed"
+    })
+  }catch{
+    return res.status(500).json({
+      message: "Something went wrong"
+    })
+  }
+
 }
 
 const calcDistance = async (startCoords, destCoords) =>{
@@ -382,6 +461,7 @@ module.exports.getUserDetail = async function(req, res){
   const profileDetails = await user_details.findOne({userId: profileId});
 
   const temp =  {
+    _id: profileDetails._id,
     name: profileDetails.name,
     age: profileDetails.age,
     avatar: profileDetails.avatar
