@@ -9,13 +9,17 @@ const messageSchema = new mongoose.Schema(
       required: true,
     },
     sender: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'user_credentials',
+      type: Number,
+      required: true,
     },
     receiver: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'user_credentials',
+      type: Number,
+      required: true,
     },
+    seen: {
+      type: Boolean,
+      required: true,
+    }
   },
   {
     timestamps: true,
