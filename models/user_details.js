@@ -9,12 +9,13 @@ const userDetailsSchema = new mongoose.Schema({
     },
     email:{
         type: String,
-        require: false,
+        require: true,
         unique: true
     },
     online:{
         type: Number,
-        required: false
+        required: true,
+        default: false,
     },
     // phone: {
     //     type: Number,
@@ -23,7 +24,8 @@ const userDetailsSchema = new mongoose.Schema({
     // },
     verified:{
         type: Boolean,
-        require: false
+        require: true,
+        default: false,
     },
     name:{
         type: String,
@@ -105,7 +107,7 @@ const userDetailsSchema = new mongoose.Schema({
     },
     showProfile:{
         type: Array,
-        require: false
+        require: true
     },
     permission: {
         type: Number,
