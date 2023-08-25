@@ -14,10 +14,21 @@ const users = {};
 
 io.on('connection', socket => {
   socket.on('setUsername', function (username) {
-    console.log("username", username);
     users[username] = [socket.id, username]; // Store the socket ID along with the username
-    console.log("setUser", users);
   });
+
+
+  socket.on('user_disconnecting', username => {
+    if(username){
+      if (users.hasOwnProperty(username)) {
+        delete users[username];
+      }
+    }
+  });
+
+  // socket.on('disconnect', function() {
+  //   console.log('Got disconnect!');
+  // });
 
   socket.on('message', function (data) {
     const { from, to, message, time } = data; // 'to' contains the username/identifier of the recipient
