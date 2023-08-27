@@ -33,6 +33,7 @@ io.on('connection', socket => {
   socket.on('message', function (data) {
     const { from, to, message, time } = data; // 'to' contains the username/identifier of the recipient
     const recipientSocketId = users[to];
+    const selfSocketId = users[from];
 
     if (recipientSocketId) {
       // Sender and receiver both are in chat window
@@ -40,6 +41,13 @@ io.on('connection', socket => {
         from: from, 
         message: message,
         time: time
+      });
+
+      io.to(selfSocketId).emit("messageback", {
+        from: from, 
+        message: message,
+        time: time,
+        seen: true
       });
 
       Message.create({
@@ -52,6 +60,13 @@ io.on('connection', socket => {
     } else {
       // Receiver is not in chat window
       const { from, to, message } = data;
+
+      io.to(selfSocketId).emit("messageback", {
+        from: from, 
+        message: message,
+        time: time,
+        seen: false
+      });
 
       Message.create({
         content: message,
@@ -73,9 +88,12 @@ module.exports.getMessages = async function (req, res) {
   var profileId = req.params.profileId;
   profileId = parseInt(profileId);
 
+  var page = req.params.pageNumber;
+  page = parseInt(page);
+
   try {
     const PAGE_SIZE = 20;
-    const pageNumber = 1; // You can dynamically change the page number based on user interactions.
+    const pageNumber = page; // You can dynamically change the page number based on user interactions.
 
     const messages = await Message.find({
       $or: [
@@ -89,22 +107,23 @@ module.exports.getMessages = async function (req, res) {
       .populate('sender', 'name')
       .populate('receiver', 'name');
 
-    if(messages[0].receiver == userId && messages[0].seen === false){
-      const messagesToSeen = await Message.find({
-        $or: [
-          { sender: userId, receiver: profileId },
-          { sender: profileId, receiver: userId },
-        ],
-        seen: false
-      });
-
-      // Update the seen field for each message
-      for (const message of messagesToSeen) {
-        message.seen = true;
-        await message.save();
-      }
+    if(messages.length > 0){
+      if(messages[0].receiver == userId && messages[0].seen === false){
+        const messagesToSeen = await Message.find({
+          $or: [
+            { sender: userId, receiver: profileId },
+            { sender: profileId, receiver: userId },
+          ],
+          seen: false
+        });
+  
+        // Update the seen field for each message
+        for (const message of messagesToSeen) {
+          message.seen = true;
+          await message.save();
+        }
+      } 
     }
-
 
     return res.status(200).json({
       success: true,
@@ -144,3 +163,41 @@ module.exports.sendMessage = async function (req, res) {
     });
   }
 };
+
+module.exports.lastMessage = async function (req, res){
+  const userId = req.user.userId;
+
+  var profileId = req.params.profileId;
+  profileId = parseInt(profileId);
+
+  try{
+
+    const lastMessage = await Message.find({
+      $or: [
+        { sender: userId, receiver: profileId },
+        { sender: profileId, receiver: userId },
+      ],
+    }).sort('-createdAt').limit(1);
+
+    const numberOfUnseenMessages = await Message.countDocuments({
+      $or: [
+        { sender: userId, receiver: profileId },
+        { sender: profileId, receiver: userId },
+      ],
+      seen: false
+    });
+
+
+    return res.status(200).json({
+      success: true,
+      lastMessage: lastMessage,
+      numberOfUnseenMessages: numberOfUnseenMessages
+    })
+  }catch (err) {
+    console.log('Error in fetching messages:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+}
