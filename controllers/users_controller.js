@@ -2,6 +2,7 @@ const user_credentials = require('../models/user_credentials');
 const user_details = require('../models/user_details');
 const maleList = require('../models/male_list');
 const femaleList = require('../models/female_list');
+const Message = require('../models/message');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
@@ -669,6 +670,13 @@ module.exports.undomatchProfile = async function(req, res){
     await user_details.updateOne({userId: profileId}, {
       $pull: {match: userId }
     }); 
+
+    await Message.deleteMany({
+      $or: [
+        { sender: userId, receiver: profileId },
+        { sender: profileId, receiver: userId }
+      ]
+    });
 
     return res.status(200).json({
       message: "Profile unmatched!"
