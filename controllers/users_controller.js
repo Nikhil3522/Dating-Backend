@@ -741,9 +741,29 @@ module.exports.block = async function(req, res){
   profileId = parseInt(profileId);
 
   try{
+
+    await user_details.updateOne({userId: userId}, {
+      $pull: {match: profileId }
+    });  
+    
     await user_details.updateOne({userId: userId}, {
       $addToSet: {block: profileId }
     }); 
+  
+    await user_details.updateOne({userId: profileId}, {
+      $pull: {match: userId }
+    }); 
+
+    await user_details.updateOne({userId: profileId}, {
+      $addToSet: {block: userId }
+    }); 
+
+    await Message.deleteMany({
+      $or: [
+        { sender: userId, receiver: profileId },
+        { sender: profileId, receiver: userId }
+      ]
+    });
 
     return res.status(200).json({
       message: "Block profile"
