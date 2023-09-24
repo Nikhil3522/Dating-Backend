@@ -608,8 +608,10 @@ module.exports.superLike = async function(req, res){
 module.exports.editProfile = async function(req, res){
   const userId = req.user.userId;
 
+  const reqData = JSON.parse(Object.keys(req.body)[0]);
+
   try{
-    await user_details.updateOne({userId: userId}, req.body);
+    await user_details.updateOne({userId: userId}, {recommendationPreferences: reqData.recommendationPreferences});
 
     return res.json({
       message: "Profile Updated"
