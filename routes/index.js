@@ -42,6 +42,7 @@ router.post('/newPassword', userController.newPassword);
 router.get('/mydetails', passport.checkAuthentication , userController.myDetail);
 router.get('/home', passport.checkAuthentication , userController.home);
 router.post('/getUserDetail/:profileId', passport.checkAuthentication, userController.getUserDetail);
+router.post('/getProfileDetail/:profileId', passport.checkAuthentication, userController.getProfileDetail);
 router.get('/like/:profileId', passport.checkAuthentication , userController.like);
 router.post('/superLike/:profileId', passport.checkAuthentication, userController.superLike);
 router.post('/nope/:profileId', passport.checkAuthentication, userController.nope);
