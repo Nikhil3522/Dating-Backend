@@ -479,6 +479,51 @@ module.exports.getUserDetail = async function(req, res){
   })
 }
 
+module.exports.getProfileDetail = async function(req, res){
+  const userId = req.user.userId;
+
+  var profileId = req.params.profileId;
+  profileId = parseInt(profileId);
+
+  var likeArr = await user_details.findOne({userId: userId}, {like: 1 });
+  var matchArr = await user_details.findOne({userId: userId}, {match: 1 });
+
+  console.log(likeArr.like);
+  console.log(matchArr.match);
+
+  if(likeArr.like.includes(profileId) || matchArr.match.includes(profileId)){
+    const profileDetails = await user_details.findOne({userId: profileId});
+
+    const temp =  {
+      _id: profileDetails._id,
+      name: profileDetails.name,
+      age: profileDetails.age,
+      avatar: profileDetails.avatar,
+      college: profileDetails.college,
+      image: profileDetails.image,
+      interest: profileDetails.interest,
+      location: profileDetails.location,
+      city: profileDetails.city,
+      verified: profileDetails.verified,
+      languages: profileDetails.languages
+    }
+  
+    if(profileDetails){
+      return res.status(200).json({
+        data: temp
+      })
+    }
+  }else{
+    return res.status(500).json({
+      message: "This data is not accessable for you"
+    })
+  }
+
+  return res.status(400).json({
+    message: "Something went wrong to find profile detail"
+  })
+}
+
 module.exports.like = async function(req, res){
   // userId have the id of user who give the like
   const userId = req.user.userId;
