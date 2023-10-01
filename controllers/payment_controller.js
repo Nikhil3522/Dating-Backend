@@ -1,3 +1,4 @@
+const user_credentials = require('../models/user_credentials');
 const Razorpay = require('razorpay');
 
 var instance = new Razorpay({ 
@@ -6,6 +7,10 @@ var instance = new Razorpay({
 });
 
 module.exports.createOrder = async (req, res) => {
+    const userId = req.user.userId;
+
+    const user = await user_credentials.findOne({userId: userId}, {name: 1, email: 1});
+    
     var options = {
         amount: req.body.amount,
         currency: "INR",
@@ -13,7 +18,8 @@ module.exports.createOrder = async (req, res) => {
     };
     instance.orders.create(options, function(err, order) {
         res.json({
-            order
+            order,
+            user
         })
     });
 }

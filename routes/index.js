@@ -40,6 +40,7 @@ router.post('/forgetPasswordOTP', userController.forgetPasswordOTP);
 router.post('/forgetPasswordOTPVerify', userController.forgetPasswordOTPVerify);
 router.post('/newPassword', userController.newPassword);
 router.get('/mydetails', passport.checkAuthentication , userController.myDetail);
+router.get('/myLike', passport.checkAuthentication , userController.myLike);
 router.get('/home', passport.checkAuthentication , userController.home);
 router.post('/getUserDetail/:profileId', passport.checkAuthentication, userController.getUserDetail);
 router.post('/getProfileDetail/:profileId', passport.checkAuthentication, userController.getProfileDetail);
@@ -51,8 +52,8 @@ router.post('/matchProfile/:profileId', passport.checkAuthentication, userContro
 router.post('/notmatchProfile/:profileId', passport.checkAuthentication, userController.notmatchProfile);
 router.post('/undomatchProfile/:profileId', passport.checkAuthentication, userController.undomatchProfile);
 router.post('/block/:profileId', passport.checkAuthentication, userController.block);
-router.get( '/create-order', paymentController.createOrder);
-router.post("/api/payment/verify", paymentController.verifyPayment);
+router.post( '/create-order', passport.checkAuthentication, paymentController.createOrder);
+router.post("/api/payment/verify", passport.checkAuthentication, paymentController.verifyPayment);
 router.get('/chat/get-messages/:profileId/:page', passport.checkAuthentication, chatController.getMessages);
 router.get('/chat/last-message/:profileId', passport.checkAuthentication, chatController.lastMessage);
 router.post('/chat/send-message', passport.checkAuthentication, chatController.sendMessage);
