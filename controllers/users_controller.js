@@ -355,10 +355,10 @@ const potentialProfileAlgorith = async (req, res) => {
   const showProfile = userDetails.showProfile;
   const like = userDetails.like;
   const superLike = userDetails.superLike;
-  const match = userDetails.showProfile;
-  // const block = userDetails.block;
+  const match = userDetails.match;
+  const block = userDetails.block;
 
-  userProfileId = userProfileId.filter((element) => !showProfile.includes(element) && !like.includes(element) && !superLike.includes(element) && !match.includes(element));
+  userProfileId = userProfileId.filter((element) => !showProfile.includes(element) && !like.includes(element) && !superLike.includes(element) && !match.includes(element) && !match.includes(block));
 
   var users = await user_details.find({ userId : { $in: userProfileId}});
 
@@ -399,14 +399,14 @@ const potentialProfileAlgorith = async (req, res) => {
   }
 
   const modifiedArray = await Promise.all(users.map(async ({ 
-    userId, name, age, my_basic, image, college, relationship_goals, languages, gender, interest, city, verified, location
+    userId, name, age, my_basic, image, college, relationship_goals, languages, gender, interest, city, verified, location, bio
   }) => {
     const radiusPromise = calcDistance(location, userDetails.location);
     const radius = await radiusPromise;
     const numericRadius = Number(radius.toFixed(0));
 
     return {
-      userId, name, age, my_basic, image, college, relationship_goals, languages, gender, interest, city, verified, radius: numericRadius
+      userId, name, age, my_basic, image, college, relationship_goals, languages, gender, interest, city, verified, radius: numericRadius, bio
     };
   }));
   
@@ -430,25 +430,52 @@ module.exports.myDetail = async function(req, res){
   })
 }
 
+module.exports.myLike = async function(req, res){
+  const userId = req.user.userId;
+
+  var permission = await user_details.findOne({ userId: userId }, { permission: 1 });
+  permission = permission.permission;
+  var like = await user_details.findOne({ userId: userId }, { like: 1 });
+  like = like.like;
+
+  if(permission > 1){
+    if(like){
+      return res.status(200).json({
+          data: like
+      })
+    }
+  }else{
+    const length = like.length;
+    return res.status(200).json({
+      data: length,
+      permission: 1
+    })
+  }
+
+  return res.status(400).json({
+    message: "Something went wrong to find user detail"
+  })
+}
+
 module.exports.home = async function(req, res){
   // This function show opposite gender profile to the loggedIN profile on the basis of loggedin user's preferences.
 
-  var loopCount = 3;
-  var users = null;
+  // var loopCount = 3;
+  // var users = null;
 
-  while(loopCount > 0){
+  // while(loopCount > 0){
     const temp = await potentialProfileAlgorith(req, res);
 
-    if(users == null){
+    // if(users == null){
+    //   users = temp;
+    // }else if(temp.length > users.length){
       users = temp;
-    }else if(temp.length > users.length){
-      users = temp;
-    }
+  //   }
 
-    if(users.length >= 10) break;
+  //   if(users.length >= 10) break;
 
-    loopCount--;
-  }
+  //   loopCount--;
+  // }
 
   return res.json({
     userList: users
