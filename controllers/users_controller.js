@@ -423,6 +423,13 @@ module.exports.myDetail = async function(req, res){
     return res.status(200).json({
       data: userDetails
     })
+  }else{
+    const userCredential = await user_credentials.findOne({userId: userId});
+
+    return res.json({
+      message: "User not exist",
+      data: userCredential
+    })
   }
 
   return res.status(400).json({
