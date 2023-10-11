@@ -48,12 +48,14 @@ router.get('/like/:profileId', passport.checkAuthentication , userController.lik
 router.post('/superLike/:profileId', passport.checkAuthentication, userController.superLike);
 router.post('/nope/:profileId', passport.checkAuthentication, userController.nope);
 router.post('/editProfile', passport.checkAuthentication, userController.editProfile);
+router.post('/editProfile2', passport.checkAuthentication, userController.editProfile2);
 router.post('/matchProfile/:profileId', passport.checkAuthentication, userController.matchProfile);
 router.post('/notmatchProfile/:profileId', passport.checkAuthentication, userController.notmatchProfile);
 router.post('/undomatchProfile/:profileId', passport.checkAuthentication, userController.undomatchProfile);
 router.post('/block/:profileId', passport.checkAuthentication, userController.block);
 router.post( '/create-order', passport.checkAuthentication, paymentController.createOrder);
 router.post("/api/payment/verify", passport.checkAuthentication, paymentController.verifyPayment);
+router.post('/savepayment', passport.checkAuthentication, paymentController.savePayment);
 router.get('/chat/get-messages/:profileId/:page', passport.checkAuthentication, chatController.getMessages);
 router.get('/chat/last-message/:profileId', passport.checkAuthentication, chatController.lastMessage);
 router.post('/chat/send-message', passport.checkAuthentication, chatController.sendMessage);
