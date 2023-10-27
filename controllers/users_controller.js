@@ -23,8 +23,11 @@ module.exports.mailVerify = function(req, res){
   var mailOptions = {
     from: process.env.MAILER_USER,
     to: mailId,
-    subject: "OTP for Verification",
-    text: `Your OTP is ${OTP_for_mail_verification[mailId]}`
+    subject: "OTP to Verify Email",
+    html: `<p>Hi ${req.body.name},</p>
+    <p>Your One Time Password(OTP) is :</p>
+    <h3>${OTP_for_mail_verification[mailId]}</h3>
+    `
   }
 
   // console.log("otp", OTP_for_mail_verification);
@@ -258,11 +261,12 @@ module.exports.forgetPasswordOTP = async function(req, res){
   var mailOptions = {
     from: process.env.MAILER_USER,
     to: mailId,
-    subject: "OTP for Verification",
-    text: `Your OTP is ${OTP_for_forget_password[mailId]}`
+    subject: "OTP to Reset Password",
+    html: `<p>Hi,</p>
+    <p>Your One Time Password(OTP) is :</p>
+    <h3>${OTP_for_forget_password[mailId]}</h3>
+    `
   }
-
-  console.log("otp", OTP_for_forget_password);
 
   const transporter = nodemailer.createTransport({
     host: process.env.MAILER_HOST,
