@@ -14,6 +14,8 @@ const jwt = require('jsonwebtoken');
 
 var OTP_for_mail_verification = {};
 
+var likeLimit = {};
+
 module.exports.mailVerify = function(req, res){
   const mailId = req.body.mailId;
 
@@ -469,6 +471,15 @@ module.exports.myLike = async function(req, res){
 }
 
 module.exports.home = async function(req, res){
+  const userId = req.user.userId;
+  
+  if(likeLimit[userId] >= 10){
+    console.log("Limit Exceed");
+    return res.status(429).json({
+      message: 'Today limit is exceed'
+    })
+  }
+
   // This function show opposite gender profile to the loggedIN profile on the basis of loggedin user's preferences.
 
   // var loopCount = 3;
@@ -571,6 +582,14 @@ module.exports.like = async function(req, res){
   profileId = parseInt(profileId);
 
   try{
+
+    if(likeLimit[userId] >= 10){
+      console.log("Limit Exceed");
+      return res.status(429).json({
+        message: 'Today limit is exceed'
+      })
+    }
+
     await user_details.updateOne({userId: profileId}, {
       $addToSet: {like: userId }
     });
@@ -581,6 +600,12 @@ module.exports.like = async function(req, res){
     await user_details.updateOne({userId: userId}, {
       $addToSet: {showProfile: {"profileId": profileId, "timestamp": isoString} }
     });
+
+    if(likeLimit[userId]){
+      likeLimit[userId]++;
+    }else{
+      likeLimit[userId] = 1;
+    }
 
     return res.status(200).json({
       message: "Liked Done!"
@@ -865,5 +890,27 @@ module.exports.cleanupShowProfile = async function(){
     });
   } catch (error) {
     console.error('Cleanup task error:', error);
+  }
+}
+
+module.exports.resetLikeLimit = async function(){
+  const now = new Date();
+
+  const options = {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  };
+  const dateTimeString = now.toLocaleString('en-US', options);
+  console.log("Reset Like Limit", dateTimeString);
+
+  try{
+    likeLimit = {};
+  }catch(err){
+    console.log('Error in resetLikeLimit function', err);
   }
 }

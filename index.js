@@ -25,8 +25,12 @@ require('dotenv').config();
 // chatServer.listen(5000);
 // console.log('chat server is listening on port 5000');
 
-cron.schedule( '0 */30 * * *' ,() => {
+cron.schedule( '2 */30 * * *' ,() => {
     userController.cleanupShowProfile();
+})
+
+cron.schedule('0 0 * * *', () => {
+    userController.resetLikeLimit();
 })
 
 app.use(express.urlencoded());
