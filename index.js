@@ -1,5 +1,3 @@
-// Radhe Shyam 
-// console.log("Radhe Shyam");
 const express = require('express');
 // const http = require('http');
 // const socketIO = require('socket.io');
@@ -11,6 +9,9 @@ const db = require('./config/mongoose');
 const session = require('express-session');
 const passport = require('passport');
 const passportLocal = require('./config/passport-local-strategy');
+const cron = require('node-cron');
+const userController = require('./controllers/users_controller');
+
 require('dotenv').config();
 
 // const server = http.createServer(app);
@@ -23,6 +24,10 @@ require('dotenv').config();
 // const chatSockets = require('./config/chat_socket').chatSocket(chatServer);
 // chatServer.listen(5000);
 // console.log('chat server is listening on port 5000');
+
+cron.schedule( '0 */30 * * *' ,() => {
+    userController.cleanupShowProfile();
+})
 
 app.use(express.urlencoded());
 

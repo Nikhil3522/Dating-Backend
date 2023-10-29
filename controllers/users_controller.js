@@ -575,8 +575,11 @@ module.exports.like = async function(req, res){
       $addToSet: {like: userId }
     });
 
+    const now = new Date();
+    const isoString = now.toISOString();
+
     await user_details.updateOne({userId: userId}, {
-      $addToSet: {showProfile: profileId }
+      $addToSet: {showProfile: {"profileId": profileId, "timestamp": isoString} }
     });
 
     return res.status(200).json({
@@ -599,8 +602,11 @@ module.exports.nope = async function(req, res){
   profileId = parseInt(profileId);
 
   try{
+    const now = new Date();
+    const isoString = now.toISOString();
+
     await user_details.updateOne({userId: userId}, {
-      $addToSet: {showProfile: profileId }
+      $addToSet: {showProfile: {"profileId": profileId, "timestamp": isoString} }
     });
 
     return res.status(200).json({
@@ -830,4 +836,34 @@ module.exports.block = async function(req, res){
     })
   }
 
+}
+
+module.exports.cleanupShowProfile = async function(){
+  const now = new Date();
+
+  const options = {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  };
+  const dateTimeString = now.toLocaleString('en-US', options);
+  console.log("cleanupShowProfile Function Executed!", dateTimeString);
+
+  try {
+    // Calculate the cutoff time (e.g., 60 hours ago)
+    const cutoffTime = new Date(Date.now() - 60 * 60 * 60 * 1000);
+
+    // Find and update userdetails for each user
+    const users = await user_details.find({}, {showProfile: 1});
+    users.forEach(async (user) => {
+      user.showProfile = user.showProfile.filter((profile) => profile.timestamp > cutoffTime);
+      await user.save();
+    });
+  } catch (error) {
+    console.error('Cleanup task error:', error);
+  }
 }
