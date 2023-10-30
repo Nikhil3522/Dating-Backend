@@ -472,9 +472,11 @@ module.exports.myLike = async function(req, res){
 
 module.exports.home = async function(req, res){
   const userId = req.user.userId;
+
+  var permission = await user_details.findOne({ userId: userId }, { permission: 1 });
+  permission = permission.permission;
   
-  if(likeLimit[userId] >= 10){
-    console.log("Limit Exceed");
+  if(likeLimit[userId] >= 10 && permission === 1){
     return res.status(429).json({
       message: 'Today limit is exceed'
     })
@@ -583,8 +585,10 @@ module.exports.like = async function(req, res){
 
   try{
 
-    if(likeLimit[userId] >= 10){
-      console.log("Limit Exceed");
+    var permission = await user_details.findOne({ userId: userId }, { permission: 1 });
+    permission = permission.permission;
+
+    if(likeLimit[userId] >= 10 && permission === 1){
       return res.status(429).json({
         message: 'Today limit is exceed'
       })
