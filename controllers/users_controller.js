@@ -3,6 +3,7 @@ const user_details = require('../models/user_details');
 const maleList = require('../models/male_list');
 const femaleList = require('../models/female_list');
 const Message = require('../models/message');
+const Subscription = require('../models/subscription');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
@@ -916,5 +917,27 @@ module.exports.resetLikeLimit = async function(){
     likeLimit = {};
   }catch(err){
     console.log('Error in resetLikeLimit function', err);
+  }
+}
+
+module.exports.checkSubscription = async function(){
+  console.log("Check Subscription");
+
+  try{
+    const data = await user_details.find({ permission: { $ne: 1 }}, { userId: 1 });
+
+    data.forEach(async (user) => {
+      var dateToCheck = await Subscription.find({userId: user.userId}, {finalDate: 1}).sort({ _id: -1 }).limit(1);
+      dateToCheck = dateToCheck[0].finalDate;
+
+      const currentDate = new Date();
+  
+      if (dateToCheck < currentDate) {
+        await user_details.updateOne({userId: user.userId}, {permission: 1});
+      }
+  
+    })
+  }catch(err){
+    console.log("Error in checkSubscription function", err);
   }
 }
