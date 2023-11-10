@@ -88,7 +88,7 @@ module.exports.getMessages = async function (req, res) {
   var profileId = req.params.profileId;
   profileId = parseInt(profileId);
 
-  var page = req.params.pageNumber;
+  var page = req.params.page;
   page = parseInt(page);
 
   try {
@@ -102,8 +102,8 @@ module.exports.getMessages = async function (req, res) {
       ],
     })
       .sort('-createdAt')
-      .skip((pageNumber - 1) * PAGE_SIZE)
-      .limit(PAGE_SIZE)
+      // .skip((pageNumber - 1) * PAGE_SIZE)
+      // .limit(PAGE_SIZE)
       .populate('sender', 'name')
       .populate('receiver', 'name');
 
@@ -119,6 +119,12 @@ module.exports.getMessages = async function (req, res) {
   
         // Update the seen field for each message
         for (const message of messagesToSeen) {
+          if(message.seen === false &&  users.hasOwnProperty(message.sender) ){
+            const recipientSocketId = users[message.sender];
+            io.to(recipientSocketId).emit('changeOnlineStatus', {
+              seen: true
+            })
+          }
           message.seen = true;
           await message.save();
         }
