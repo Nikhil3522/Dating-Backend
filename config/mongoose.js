@@ -1,8 +1,10 @@
 //require the library
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 mongoose.set('strictQuery', false);
-mongoose.connect("mongodb://localhost/Dating", { useNewUrlParser: true });
+// mongoose.connect("mongodb://localhost/Dating", { useNewUrlParser: true });
+mongoose.connect(process.env.MONGO_DB_ATLAS_STRING, { useNewUrlParser: true });
 
 const db = mongoose.connection;
 
