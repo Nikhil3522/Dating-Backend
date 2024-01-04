@@ -17,7 +17,9 @@ router.use(cors({
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
 
-console.log("Hare Krishna")
+router.get('/test', () => {
+  return res.status(201).json({ message: "API is working!" });
+})
 
 router.post('/login', passport.authenticate(
     'local',

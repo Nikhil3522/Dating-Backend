@@ -258,35 +258,41 @@ var OTP_for_forget_password = {};
 module.exports.forgetPasswordOTP = async function(req, res){
   const mailId = req.body.mailId;
 
-  const otp = Math.floor(1000 + Math.random() * 9000);
-  OTP_for_forget_password[mailId] = otp;
+  const checkUserExist = await user_credentials.findOne({email: mailId});
 
-  var mailOptions = {
-    from: process.env.MAILER_USER,
-    to: mailId,
-    subject: "OTP to Reset Password",
-    html: `<p>Hi,</p>
-    <p>Your One Time Password(OTP) is :</p>
-    <h3>${OTP_for_forget_password[mailId]}</h3>
-    `
+  if(checkUserExist){
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    OTP_for_forget_password[mailId] = otp;
+
+    var mailOptions = {
+      from: process.env.MAILER_USER,
+      to: mailId,
+      subject: "OTP to Reset Password",
+      html: `<p>Hi,</p>
+      <p>Your One Time Password(OTP) is :</p>
+      <h3>${OTP_for_forget_password[mailId]}</h3>
+      `
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAILER_HOST,
+      port: process.env.MAILER_PORT,
+      auth: {
+          user: process.env.MAILER_USER,
+          pass: process.env.MAILER_PASS 
+      }
+    });
+
+    transporter.sendMail(mailOptions, function(err, info){
+      if(err){
+        return res.status(500).json({message: `Something Went wrong for send OTP. ${err}`});
+      } else {
+        return res.status(200).json({message: `Email sent: ${info.response}`});
+      }
+    })
+  }else{
+    return res.status(200).json({message: 'Email id is not exist.', emailNotExist: true});
   }
-
-  const transporter = nodemailer.createTransport({
-    host: process.env.MAILER_HOST,
-    port: process.env.MAILER_PORT,
-    auth: {
-        user: process.env.MAILER_USER,
-        pass: process.env.MAILER_PASS 
-    }
-  });
-
-  transporter.sendMail(mailOptions, function(err, info){
-    if(err){
-      return res.status(500).json({message: `Something Went wrong for send OTP. ${err}`});
-    } else {
-      return res.status(200).json({message: `Email sent: ${info.response}`});
-    }
-  })
 }
 
 module.exports.forgetPasswordOTPVerify = async function(req, res){
