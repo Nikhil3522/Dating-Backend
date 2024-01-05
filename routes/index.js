@@ -18,7 +18,7 @@ router.use(cors({
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
 
-router.get('/test', () => {
+router.get('/test', (req, res) => {
   return res.status(201).json({ message: "API is working!" });
 })
 
