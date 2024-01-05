@@ -9,7 +9,8 @@ const http = require('http');
 
 
 router.use(cors({
-    origin: 'http://localhost:3000', // Update with the actual origin of your React.js app
+    // origin: 'http://localhost:3000', // Update with the actual origin of your React.js app
+    origin:  '*',
     methods: ['GET', 'POST'],
     credentials: true // Allow credentials (e.g., cookies, authorization headers)
   }));
