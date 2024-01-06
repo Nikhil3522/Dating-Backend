@@ -10,7 +10,6 @@ const http = require('http');
 
 router.use(cors({
     origin: 'http://localhost:3000', // Update with the actual origin of your React.js app
-    // origin:  '*',
     methods: ['GET', 'POST'],
     credentials: true // Allow credentials (e.g., cookies, authorization headers)
   }));
@@ -18,7 +17,7 @@ router.use(cors({
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
 
-router.get('/test', (req, res) => {
+router.get('/test', () => {
   return res.status(201).json({ message: "API is working!" });
 })
 
