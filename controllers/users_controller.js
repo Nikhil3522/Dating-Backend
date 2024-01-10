@@ -107,10 +107,10 @@ function countFilesInFolder(folderPath) {
 
 // Define the storage configuration for multer
 const storage = multer.diskStorage({
-  destination: 'C:/Users/nikhi/Desktop/react2/Dating/BackEnd/assets/image', // Replace with the actual folder path
+  destination: path.join(__dirname, '../assets/image'), // Replace with the actual folder path
   filename: (req, file, cb) => {
     // Get the current file count in the folder
-    const folderPath = 'C:/Users/nikhi/Desktop/react2/Dating/BackEnd/assets/image'; // Replace with the actual folder path
+    const folderPath = path.join(__dirname, '../assets/image'); // Replace with the actual folder path
     const fileCount = fs.readdirSync(folderPath).length;
 
     const filename = `${fileCount + 1}${path.extname(file.originalname)}`;
@@ -122,7 +122,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 module.exports.imageUploader = function (req, res) {
-  const folderPath = 'C:/Users/nikhi/Desktop/react2/Dating/BackEnd/assets/image'; // Replace with the actual folder path
+  const folderPath = path.join(__dirname, '../assets/image'); // Replace with the actual folder path
 
   upload.single('image')(req, res, function (err){
 
