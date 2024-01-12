@@ -52,6 +52,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Serve static files from the 'assets' directory
+app.use('/assets', express.static('assets'));
+
 app.use('/', require('./routes'));
 
 app.listen(port, function (err) {
