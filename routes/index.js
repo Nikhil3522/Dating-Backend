@@ -21,7 +21,7 @@ router.get('/test', () => {
   return res.status(201).json({ message: "API is working!" });
 })
 
-router. Post('/login', passport.authenticate(
+router.post('/login', passport.authenticate(
     'local',
     {failureRedirect: '/wrongCredential'},
 ), userController.loginUser);
