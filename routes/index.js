@@ -24,7 +24,7 @@ router.get('/test', () => {
 router.post('/login', passport.authenticate('local', {failureRedirect: '/wrongCredential'}), (req, res) => {
   const userId = req.user.userId;
 
-  res.cookie('codeial', userId, { domain: '.onrender.com', path: '/' });
+  res.cookie('codeial', userId, { domain: '.onrender.com', path: '/' , secure: true, sameSite: 'None' });
 
   res.status(200).json({ message: 'User logged in successfully' });
 });
