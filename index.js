@@ -47,7 +47,7 @@ app.use(session({
     cookie: {
         sameSite: 'None',
         secure: true,
-        domain: 'onrender.com'
+        domain: 'frontend-datuni.onrender.com'
         // maxAge: (1000 * 60 * 100)
     }
 }));
