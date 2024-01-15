@@ -21,10 +21,14 @@ router.get('/test', () => {
   return res.status(201).json({ message: "API is working!" });
 })
 
-router.post('/login', passport.authenticate(
-    'local',
-    {failureRedirect: '/wrongCredential'},
-), userController.loginUser);
+router.post('/login', passport.authenticate('local', {failureRedirect: '/wrongCredential'}), (req, res) => {
+  const userId = req.user.userId;
+
+  res.cookie('codeial', userId, { domain: '.onrender.com', path: '/' });
+
+  res.status(200).json({ message: 'User logged in successfully' });
+});
+            
 router.get('/logout', (req, res) => {
   req.logout((err) => {
     if (err) {
