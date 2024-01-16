@@ -45,7 +45,7 @@ app.use(session({
     saveUninitialized: false,
     resave: false,
     cookie: {
-        domain: '.onrender.com',
+        domain: 'www.dateuni.in',
         path: '/',
         // secure: true,
         sameSite: 'None',
