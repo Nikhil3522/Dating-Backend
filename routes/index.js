@@ -9,7 +9,7 @@ const http = require('http');
 
 
 router.use(cors({
-    origin: ['https://www.dateuni.in', 'https://dateuni.in', *],
+    origin: ['https://www.dateuni.in', 'https://dateuni.in', '*'],
     methods: ['GET', 'POST'],
     credentials: true // Allow credentials (e.g., cookies, authorization headers)
   }));
