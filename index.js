@@ -45,9 +45,10 @@ app.use(session({
     saveUninitialized: false,
     resave: false,
     cookie: {
-        sameSite: 'None',
+        domain: '.dateuni.in',
+        path: '/',
         secure: true,
-        domain: 'frontend-datuni.onrender.com'
+        sameSite: 'None',
         // maxAge: (1000 * 60 * 100)
     }
 }));
