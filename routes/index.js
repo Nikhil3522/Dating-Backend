@@ -9,7 +9,7 @@ const http = require('http');
 
 
 router.use(cors({
-    origin: ['https://frontend-datuni.onrender.com', 'https://dateuni.in'], // Update with the actual origin of your React.js app
+    origin: 'https://dateuni.in', // Update with the actual origin of your React.js app
     methods: ['GET', 'POST'],
     credentials: true // Allow credentials (e.g., cookies, authorization headers)
   }));
