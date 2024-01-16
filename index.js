@@ -45,7 +45,7 @@ app.use(session({
     saveUninitialized: false,
     resave: false,
     cookie: {
-        domain: 'www.dateuni.in',
+        domain: '.dateuni.in',
         path: '/',
         // secure: true,
         sameSite: 'None',
