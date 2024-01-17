@@ -11,6 +11,8 @@ const passport = require('passport');
 const passportLocal = require('./config/passport-local-strategy');
 const cron = require('node-cron');
 const userController = require('./controllers/users_controller');
+const MongoStore = require('connect-mongo');
+const mongoose = require('mongoose');
 
 require('dotenv').config();
 
@@ -44,6 +46,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_DB_ATLAS_STRING }),
     // cookie: {
         // domain: '.dateuni.in',
         // path: '/',
