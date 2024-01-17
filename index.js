@@ -44,13 +44,13 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
-    cookie: {
+    // cookie: {
         // domain: '.dateuni.in',
-        path: '/',
+        // path: '/',
         // secure: true,
-        sameSite: 'None',
+        // sameSite: 'None',
         // maxAge: (1000 * 60 * 100)
-    }
+    // }
 }));
 
 app.use(passport.initialize());
