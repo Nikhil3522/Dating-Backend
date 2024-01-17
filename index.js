@@ -1,7 +1,7 @@
 const express = require('express');
 // const http = require('http');
 // const socketIO = require('socket.io');
-const port = 8000;
+const port = process.env.PORT || 8000;
 const app = express();
 app.use(express.urlencoded());
 app.use(express.static('assets'));
