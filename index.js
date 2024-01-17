@@ -42,11 +42,11 @@ cron.schedule('55 23 * * *', () => {
 app.use(express.urlencoded());
 
 app.use(session({
-    name: 'codeial',
+    // name: 'codeial',
     secret: process.env.SESSION_SECRET,
-    saveUninitialized: false,
-    resave: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_DB_ATLAS_STRING }),
+    // saveUninitialized: false,
+    // resave: false,
+    // store: MongoStore.create({ mongoUrl: process.env.MONGO_DB_ATLAS_STRING }),
     // cookie: {
         // domain: '.dateuni.in',
         // path: '/',
