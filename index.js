@@ -44,12 +44,12 @@ app.use(express.urlencoded());
 app.use(session({
     name: 'codeial',
     secret: process.env.SESSION_SECRET,
-    // saveUninitialized: false,
-    // resave: false,
+    saveUninitialized: false,
+    resave: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_DB_ATLAS_STRING }),
     cookie: {
-        // domain: '.dateuni.in',
-        // path: '/',
+        domain: '.dateuni.in',
+        path: '/',
         secure: true,
         sameSite: 'None',
         // maxAge: (1000 * 60 * 100)
