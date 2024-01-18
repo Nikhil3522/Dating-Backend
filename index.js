@@ -50,7 +50,7 @@ app.use(session({
     cookie: {
         // domain: '.dateuni.in',
         // path: '/',
-        // secure: true,
+        secure: true,
         sameSite: 'None',
         // maxAge: (1000 * 60 * 100)
     }
