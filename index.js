@@ -51,7 +51,7 @@ app.use(session({
     //     domain: '.dateuni.in',
     //     path: '/',
         secure: true,
-        sameSite: 'strict',
+        sameSite: 'none',
     //     // maxAge: (1000 * 60 * 100)
     }
 }));
