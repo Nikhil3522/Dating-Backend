@@ -9,7 +9,7 @@ const http = require('http');
 
 
 router.use(cors({
-    origin: ['https://www.dateuni.in', 'https://dateuni.in', 'https://dating-frontend-sigma.vercel.app', '*'],
+    origin: ['https://www.dateuni.in', 'https://dateuni.in', 'https://dating-frontend-sigma.vercel.app', 'https://dating-frontend-dz7d-88uhgspi6-nikhils-projects-e8cae1c7.vercel.app', '*'],
     methods: ['GET', 'POST'],
     credentials: true // Allow credentials (e.g., cookies, authorization headers)
   }));
