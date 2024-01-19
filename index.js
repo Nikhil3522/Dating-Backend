@@ -41,18 +41,29 @@ cron.schedule('55 23 * * *', () => {
 
 app.use(express.urlencoded());
 
+// app.use(session({
+//     name: 'codeial',
+//     secret: process.env.SESSION_SECRET,
+//     // saveUninitialized: false,
+//     // resave: false,
+//     store: MongoStore.create({ mongoUrl: process.env.MONGO_DB_ATLAS_STRING }),
+//     cookie: {
+//     //     domain: '.dateuni.in',
+//     //     path: '/',
+//         secure: true,
+//         sameSite: 'none',
+//     //     // maxAge: (1000 * 60 * 100)
+//     }
+// }));
+
 app.use(session({
     name: 'codeial',
     secret: process.env.SESSION_SECRET,
-    // saveUninitialized: false,
-    // resave: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_DB_ATLAS_STRING }),
     cookie: {
-    //     domain: '.dateuni.in',
-    //     path: '/',
         secure: true,
         sameSite: 'none',
-    //     // maxAge: (1000 * 60 * 100)
+        domain: '.dateuni.in',
     }
 }));
 
