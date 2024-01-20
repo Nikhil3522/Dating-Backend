@@ -61,6 +61,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_DB_ATLAS_STRING }),
     cookie: {
+        httpOnly: true,
         secure: true,
         sameSite: 'none',
         domain: '.dateuni.in',
