@@ -4,12 +4,42 @@ const router = express.Router();
 const userController = require('../controllers/users_controller');  
 const paymentController = require('../controllers/payment_controller');
 const chatController = require('../controllers/chat_controller');
-const passport = require('passport');
 const http = require('http');
+const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const secretKey = 'secretKey';
+router.use(bodyParser.json());
+router.use(cookieParser());
+const user_credentials = require('../models/user_credentials');
+const bcrypt = require('bcryptjs');
 
+
+
+// Middleware function to check if the user is authenticated
+const authenticateMiddleware = (req, res, next) => {
+  // Get the token from the request headers
+  const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : req.cookies.jwtToken;
+  if (!token) {
+    // Token is missing, unauthorized
+    return res.status(401).json({ message: 'Unauthorized - Token missing' });
+  }
+
+  // Verify the token
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      // Token is invalid, unauthorized
+      return res.status(401).json({ message: 'Unauthorized - Invalid token' });
+    }
+
+    // Token is valid, user is authenticated
+    req.user = decoded; // Attach user information to the request object
+    next(); // Continue to the next middleware or route
+  });
+};
 
 router.use(cors({
-    origin: ['https://www.dateuni.in', 'https://dateuni.in', 'https://dating-frontend-sigma.vercel.app', 'https://dating-frontend-dz7d-88uhgspi6-nikhils-projects-e8cae1c7.vercel.app', 'http://localhost:3000', 'https://front-two-swart.vercel.app', 'https://frontend-datuni.onrender.com','*'],
+    origin: ['http://localhost:3000', 'https://www.dateuni.in'],
     methods: ['GET', 'POST'],
     credentials: true // Allow credentials (e.g., cookies, authorization headers)
   }));
@@ -17,14 +47,46 @@ router.use(cors({
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
 
-router.get('/test', () => {
+router.post('/login', async (req, res) => {
+
+  try{
+
+    const {email, password} = req.body;
+    const lowerCaseEmail = email.toLowerCase();
+    const user = await user_credentials.findOne({ email: { $regex: new RegExp('^' + lowerCaseEmail + '$', 'i') } });
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if(user && passwordMatch){
+      const tempUser = { userId: user.userId, username: user.name };
+      const token = jwt.sign(tempUser, 'secretKey', { expiresIn: '1h' });
+      res.cookie('jwtToken', token, {
+        // httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        // domain: '.your-domain.com', // Replace with your actual domain
+      });
+    
+      // Send a response indicating successful login
+      res.json({ message: 'User LoggedIN!', token });
+    }
+
+  }catch (error){
+    console.log("Something went wrong in login");
+    return res.status(401).json({
+      message: 'Something went wrong!'
+    })
+  }
+
+});
+
+router.get('/test', (req, res) => {
   return res.status(201).json({ message: "API is working!" });
 })
 
-router.post('/login', passport.authenticate(
-    'local',
-    {failureRedirect: '/wrongCredential'},
-), userController.loginUser);
+// router.post('/login', passport.authenticate(
+//     'local',
+//     {failureRedirect: '/wrongCredential'},
+// ), userController.loginUser);
             
 router.get('/logout', (req, res) => {
   req.logout((err) => {
@@ -42,25 +104,25 @@ router.get('/wrongCredential', userController.wrongCredential);
 router.post('/forgetPasswordOTP', userController.forgetPasswordOTP);
 router.post('/forgetPasswordOTPVerify', userController.forgetPasswordOTPVerify);
 router.post('/newPassword', userController.newPassword);
-router.get('/mydetails', passport.checkAuthentication , userController.myDetail);
-router.get('/myLike', passport.checkAuthentication , userController.myLike);
-router.get('/home', passport.checkAuthentication , userController.home);
-router.post('/getUserDetail/:profileId', passport.checkAuthentication, userController.getUserDetail);
-router.post('/getProfileDetail/:profileId', passport.checkAuthentication, userController.getProfileDetail);
-router.get('/like/:profileId', passport.checkAuthentication , userController.like);
-router.post('/superLike/:profileId', passport.checkAuthentication, userController.superLike);
-router.post('/nope/:profileId', passport.checkAuthentication, userController.nope);
-router.post('/editProfile', passport.checkAuthentication, userController.editProfile);
-router.post('/editProfile2', passport.checkAuthentication, userController.editProfile2);
-router.post('/matchProfile/:profileId', passport.checkAuthentication, userController.matchProfile);
-router.post('/notmatchProfile/:profileId', passport.checkAuthentication, userController.notmatchProfile);
-router.post('/undomatchProfile/:profileId', passport.checkAuthentication, userController.undomatchProfile);
-router.post('/block/:profileId', passport.checkAuthentication, userController.block);
-router.post( '/create-order', passport.checkAuthentication, paymentController.createOrder);
-router.post("/api/payment/verify", passport.checkAuthentication, paymentController.verifyPayment);
-router.post('/savepayment', passport.checkAuthentication, paymentController.savePayment);
-router.get('/chat/get-messages/:profileId/:page', passport.checkAuthentication, chatController.getMessages);
-router.get('/chat/last-message/:profileId', passport.checkAuthentication, chatController.lastMessage);
-router.post('/chat/send-message', passport.checkAuthentication, chatController.sendMessage);
+router.get('/mydetails', authenticateMiddleware , userController.myDetail);
+router.get('/myLike', authenticateMiddleware , userController.myLike);
+router.get('/home', authenticateMiddleware , userController.home);
+router.post('/getUserDetail/:profileId', authenticateMiddleware, userController.getUserDetail);
+router.post('/getProfileDetail/:profileId', authenticateMiddleware, userController.getProfileDetail);
+router.get('/like/:profileId', authenticateMiddleware , userController.like);
+router.post('/superLike/:profileId', authenticateMiddleware, userController.superLike);
+router.post('/nope/:profileId', authenticateMiddleware, userController.nope);
+router.post('/editProfile', authenticateMiddleware, userController.editProfile);
+router.post('/editProfile2', authenticateMiddleware, userController.editProfile2);
+router.post('/matchProfile/:profileId', authenticateMiddleware, userController.matchProfile);
+router.post('/notmatchProfile/:profileId', authenticateMiddleware, userController.notmatchProfile);
+router.post('/undomatchProfile/:profileId', authenticateMiddleware, userController.undomatchProfile);
+router.post('/block/:profileId', authenticateMiddleware, userController.block);
+router.post( '/create-order', authenticateMiddleware, paymentController.createOrder);
+router.post("/api/payment/verify", authenticateMiddleware, paymentController.verifyPayment);
+router.post('/savepayment', authenticateMiddleware, paymentController.savePayment);
+router.get('/chat/get-messages/:profileId/:page', authenticateMiddleware, chatController.getMessages);
+router.get('/chat/last-message/:profileId', authenticateMiddleware, chatController.lastMessage);
+router.post('/chat/send-message', authenticateMiddleware, chatController.sendMessage);
 
 module.exports = router ;

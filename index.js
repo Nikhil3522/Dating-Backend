@@ -6,7 +6,7 @@ const app = express();
 app.use(express.urlencoded());
 app.use(express.static('assets'));
 const db = require('./config/mongoose');
-const session = require('express-session');
+// const session = require('express-session');
 const passport = require('passport');
 const passportLocal = require('./config/passport-local-strategy');
 const cron = require('node-cron');
@@ -42,34 +42,23 @@ cron.schedule('55 23 * * *', () => {
 app.use(express.urlencoded());
 
 // app.use(session({
-//     name: 'codeial',
-//     secret: process.env.SESSION_SECRET,
-//     // saveUninitialized: false,
-//     // resave: false,
-//     store: MongoStore.create({ mongoUrl: process.env.MONGO_DB_ATLAS_STRING }),
-//     cookie: {
-//     //     domain: '.dateuni.in',
-//     //     path: '/',
-//         secure: true,
-//         sameSite: 'none',
-//     //     // maxAge: (1000 * 60 * 100)
-//     }
+    // name: 'codeial',
+    // secret: process.env.SESSION_SECRET,
+    // saveUninitialized: false,
+    // resave: false,
+    // store: MongoStore.create({ mongoUrl: process.env.MONGO_DB_ATLAS_STRING }),
+    // cookie: {
+        // httpOnly: true,
+        // domain: '.dateuni.in',
+        // path: '/',
+        // secure: true,
+        // sameSite: 'None',
+        // maxAge: (1000 * 60 * 100)
+    // }
 // }));
 
-app.use(session({
-    name: 'codeial',
-    secret: process.env.SESSION_SECRET,
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_DB_ATLAS_STRING }),
-    cookie: {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        domain: '.dateuni.in',
-    }
-}));
-
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 // Serve static files from the 'assets' directory
 app.use('/assets', express.static('assets'));
