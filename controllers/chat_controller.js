@@ -4,7 +4,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const index = require('../index');
 const io = require('socket.io')(index.server, {
   cors: {
-    origin: 'http://localhost:3000', 
+    origin: ['http://localhost:3000', 'https://www.dateuni.in'], 
     methods: ['GET', 'POST'],
     credentials: true,
   },
