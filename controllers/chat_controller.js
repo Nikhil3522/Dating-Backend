@@ -1,8 +1,8 @@
 const Message = require('../models/message');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
-
-const io = require('socket.io')(8900, {
+const index = require('../index');
+const io = require('socket.io')(index.server, {
   cors: {
     origin: 'http://localhost:3000', 
     methods: ['GET', 'POST'],

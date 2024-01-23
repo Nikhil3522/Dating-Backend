@@ -63,12 +63,16 @@ app.use(passport.initialize());
 // Serve static files from the 'assets' directory
 app.use('/assets', express.static('assets'));
 
-app.use('/', require('./routes'));
+var server;
 
-app.listen(port, "0.0.0.0" , function (err) {
+
+server = app.listen(port, "0.0.0.0" , function (err) {
     if (err) {
         console.log('Error in running the server', err);
     }
 
     console.log('Yup!My Express server is running on port: ', port);
 });
+
+module.exports = { server }
+app.use('/', require('./routes'));
