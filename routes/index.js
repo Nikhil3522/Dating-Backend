@@ -97,7 +97,7 @@ router.get('/test', (req, res) => {
 //     return res.status(201).json({ message: "Logout successfully" });
 //   });
 // });
-outer.get('/logout', (req, res) => {
+router.get('/logout', (req, res) => {
   // Clear the JWT token cookie
   res.clearCookie('jwtToken', {
     secure: true,
