@@ -89,13 +89,23 @@ router.get('/test', (req, res) => {
 //     {failureRedirect: '/wrongCredential'},
 // ), userController.loginUser);
             
-router.get('/logout', (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      return res.status(500).json({ message: "Logout failed" });
-    }
-    return res.status(201).json({ message: "Logout successfully" });
+// router.get('/logout', (req, res) => {
+//   req.logout((err) => {
+//     if (err) {
+//       return res.status(500).json({ message: "Logout failed" });
+//     }
+//     return res.status(201).json({ message: "Logout successfully" });
+//   });
+// });
+outer.get('/logout', (req, res) => {
+  // Clear the JWT token cookie
+  res.clearCookie('jwtToken', {
+    secure: true,
+    sameSite: 'none',
+    // domain: '.your-domain.com', // Replace with your actual domain
   });
+
+  return res.status(201).json({ message: "Logout successfully" });
 });
 router.post('/signup', userController.createUser);
 router.post('/mailverify', userController.mailVerify);
