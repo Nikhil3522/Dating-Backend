@@ -35,9 +35,9 @@ cron.schedule('0 0 * * *', () => {
     userController.resetLikeLimit();
 })
 
-cron.schedule('55 23 * * *', () => {
-    userController.checkSubscription();
-})
+// cron.schedule('55 23 * * *', () => {
+//     userController.checkSubscription();
+// })
 
 app.use(express.urlencoded());
 
