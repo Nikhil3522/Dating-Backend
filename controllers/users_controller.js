@@ -365,7 +365,8 @@ const potentialProfileAlgorith = async (req, res) => {
   }
 
   // Removed the userId who already present in any one of these list.
-  const showProfile = userDetails.showProfile;
+  var showProfile = userDetails.showProfile;
+  showProfile = showProfile.map((item) => item.profileId);
   const like = userDetails.like;
   const superLike = userDetails.superLike;
   const match = userDetails.match;
