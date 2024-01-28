@@ -68,7 +68,11 @@ router.post('/login', async (req, res) => {
       });
     
       // Send a response indicating successful login
-      res.json({ message: 'User LoggedIN!', token });
+      return res.json({ message: 'User LoggedIN!', token });
+    }else{
+      return res.status(401).json({
+        message: 'Wrong Email or Passwod!'
+      })
     }
 
   }catch (error){
