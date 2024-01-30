@@ -33,6 +33,8 @@ module.exports.mailVerify = function(req, res){
     `
   }
 
+  console.log("OTP", OTP_for_mail_verification[mailId]);
+
   // console.log("otp", OTP_for_mail_verification);
 
   const transporter = nodemailer.createTransport({
