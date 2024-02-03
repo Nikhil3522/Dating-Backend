@@ -60,12 +60,15 @@ router.post('/login', async (req, res) => {
       const tempUser = { userId: user.userId, username: user.name };
       const token = jwt.sign(tempUser, 'secretKey', { expiresIn: '1h' });
       res.cookie('jwtToken', token, {
-        // httpOnly: true,
+        httpOnly: true,
         secure: true,
         sameSite: 'none',
         maxAge: (365 * 24 * 60 * 60 * 1000)
         // domain: '.your-domain.com', // Replace with your actual domain
       });
+
+      // Set CORS headers
+      res.header('Access-Control-Allow-Origin', 'https://www.dateuni.in');
     
       // Send a response indicating successful login
       return res.json({ message: 'User LoggedIN!', token });
