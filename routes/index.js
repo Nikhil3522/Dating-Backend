@@ -124,6 +124,7 @@ router.post('/forgetPasswordOTPVerify', userController.forgetPasswordOTPVerify);
 router.post('/newPassword', userController.newPassword);
 router.get('/mydetails', authenticateMiddleware , userController.myDetail);
 router.get('/myLike', authenticateMiddleware , userController.myLike);
+router.get('/myLikeCount', authenticateMiddleware , userController.myLikeCount)
 router.get('/home', authenticateMiddleware , userController.home);
 router.post('/getUserDetail/:profileId', authenticateMiddleware, userController.getUserDetail);
 router.post('/getProfileDetail/:profileId', authenticateMiddleware, userController.getProfileDetail);

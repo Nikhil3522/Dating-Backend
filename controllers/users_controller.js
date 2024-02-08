@@ -480,6 +480,26 @@ module.exports.myLike = async function(req, res){
   })
 }
 
+module.exports.myLikeCount = async function(req, res){
+  const userId = req.user.userId;
+
+  try{
+    var likeLength = await user_details.aggregate([
+        { $match: { userId: userId } },
+        { $project: { likeLength: { $size: "$like" } } }
+    ]);
+    
+    return res.status(200).json({
+      data: likeLength[0].likeLength
+    })
+  
+  }catch(err){
+    return res.status(400).json({
+      message: "Something went wrong to find user detail"
+    })
+  }
+}
+
 module.exports.home = async function(req, res){
   const userId = req.user.userId;
 
