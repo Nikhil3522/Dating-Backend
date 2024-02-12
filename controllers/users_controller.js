@@ -374,7 +374,7 @@ const potentialProfileAlgorith = async (req, res) => {
   const match = userDetails.match;
   const block = userDetails.block;
 
-  userProfileId = userProfileId.filter((element) => !showProfile.includes(element) && !like.includes(element) && !superLike.includes(element) && !match.includes(element) && !match.includes(block));
+  userProfileId = userProfileId.filter((element) => !showProfile.includes(element) && !like.includes(element) && !superLike.includes(element) && !match.includes(element) && !match.includes(element));
 
   var users = await user_details.find({ userId : { $in: userProfileId}});
 
